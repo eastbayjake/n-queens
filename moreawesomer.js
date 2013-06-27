@@ -1,8 +1,9 @@
 var queens = function(n){
-  queens.boardStorage = makeTree(queens.blankBoard(), -1, 0);
+  queens.boardStorage = makeTree(queens.blankBoard(n), -1, 0);
   queens.solvedCount = 0;
-  queens.testBoard = null;
+  // queens.testBoard = null;
   queens.solver(n, 0, queens.boardStorage);
+  return queens.solvedCount;
 };
 
 queens.blankBoard = function(n){
@@ -19,16 +20,18 @@ queens.blankBoard = function(n){
 queens.solver = function(n, y, board){
   var tempboard;
   for (var i = 0; i < n; i++){
-    if (queens.testBoard[y][i]){
+    if (board.value[y][i]){
       if (y === n - 1) {queens.solvedCount++; return;}
-      tempboard = queens.testBoard;
+      tempboard = jQuery.extend(true, {}, board);
       queens.removeCollisions(n, y, i, tempboard);
-      queens.testBoard.addChild(tempboard, y, i);
+      board.addChild(tempboard.value, y, i);
     }
   }
+  var k = 0;
   for (var j = 0; j < n; j++){
-    if (queens.testBoard[y][j]){
-      queens.solver(n, y + 1, queens.testBoard.children[j]);
+    if (board.value[y][j]){
+      queens.solver(n, y + 1, board.children[k]);
+      k++;
     }
   }
 };
@@ -36,22 +39,21 @@ queens.solver = function(n, y, board){
 queens.removeCollisions = function(n, y, x, board){
   var column = function(){
     for (var i = 0; i < n; i++) {
-      board[i][x] = undefined;
+      board.value[i][x] = null;
     }
   };
   var majorDown = function(b, a){
     while(b < n - 1 && a > 0){
       b++; a--;
-      board[b][a] = undefined;
+      board.value[b][a] = null;
     }
   };
   var minorDown = function(b, a){
     while(b < n - 1 && a < n - 1){
       b++; a++;
-      board[b][a] = undefined;
+      board.value[b][a] = null;
     }
   };
-  row();
   column();
   majorDown(y, x);
   minorDown(y, x);
@@ -64,8 +66,8 @@ var makeTree = function(val, row, col){
     value: val,
     children: [],
     row: row,
-    col: col,
-    parent: null
+    col: col
+    // parent: null
   };
   _.extend(newTree, treeMethods);
   return newTree;
@@ -74,7 +76,7 @@ var makeTree = function(val, row, col){
 var treeMethods = {};
 treeMethods.addChild = function(val){
   this.children.push(makeTree(val));
-  this.children[this.children.length - 1].parent = this;
+  // this.children[this.children.length - 1].parent = this;
   return this.children[this.children.length - 1];
 };
 
@@ -88,13 +90,13 @@ treeMethods.traverse = function(func){
   _.invoke(this.children, 'traverse', func);
 };
 
-treeMethods.removeFromParent = function(){
+// treeMethods.removeFromParent = function(){
   // find and remove link to child in parent
-  var newTree = this; // this changes in the each function so use a temp var
-  _.each(this.parent.children, function(child, index, children){
-    if(newTree === child) {children.splice(index, 1);}
-  });
+  // var newTree = this; // this changes in the each function so use a temp var
+  // _.each(this.parent.children, function(child, index, children){
+    // if(newTree === child) {children.splice(index, 1);}
+  // });
   // remove link to parent and return new tree
-  this.parent = null;
-  return newTree;
-};
+  // this.parent = null;
+  // return newTree;
+// };
