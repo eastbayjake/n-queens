@@ -1,7 +1,6 @@
 var queens = function(n){
   queens.boardStorage = makeTree(queens.blankBoard(n), -1, 0);
   queens.solvedCount = 0;
-  // queens.testBoard = null;
   queens.solver(n, 0, queens.boardStorage);
   return queens.solvedCount;
 };
@@ -67,7 +66,6 @@ var makeTree = function(val, row, col){
     children: [],
     row: row,
     col: col
-    // parent: null
   };
   _.extend(newTree, treeMethods);
   return newTree;
@@ -76,7 +74,6 @@ var makeTree = function(val, row, col){
 var treeMethods = {};
 treeMethods.addChild = function(val){
   this.children.push(makeTree(val));
-  // this.children[this.children.length - 1].parent = this;
   return this.children[this.children.length - 1];
 };
 
@@ -89,14 +86,3 @@ treeMethods.traverse = function(func){
   func.call(this.value);
   _.invoke(this.children, 'traverse', func);
 };
-
-// treeMethods.removeFromParent = function(){
-  // find and remove link to child in parent
-  // var newTree = this; // this changes in the each function so use a temp var
-  // _.each(this.parent.children, function(child, index, children){
-    // if(newTree === child) {children.splice(index, 1);}
-  // });
-  // remove link to parent and return new tree
-  // this.parent = null;
-  // return newTree;
-// };
